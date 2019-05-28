@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vici.loginprovide.dao.ItemMapper">
+  <resultMap id="BaseResultMap" type="com.vici.loginprovide.model.Item">
+    <id column="item_id" jdbcType="INTEGER" property="itemId" />
+    <result column="item_name" jdbcType="VARCHAR" property="itemName" />
+    <result column="item_version" jdbcType="VARCHAR" property="itemVersion" />
+    <result column="item_create_time" jdbcType="TIMESTAMP" property="itemCreateTime" />
+    <result column="item_modify_time" jdbcType="TIMESTAMP" property="itemModifyTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    item_id, item_name, item_version, item_create_time, item_modify_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from item
+    where item_id = #{itemId,jdbcType=INTEGER}
+  </select>
+
+  <!-- 查询全部的场景信息 -->
+  <select id="selectAllItem" resultMap="BaseResultMap">
+    select item_id, item_name, item_version  from  item
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from item
+    where item_id = #{itemId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.vici.loginprovide.model.Item">
+    insert into item (item_id, item_name, item_version, 
+      item_create_time, item_modify_time)
+    values (#{itemId,jdbcType=INTEGER}, #{itemName,jdbcType=VARCHAR}, #{itemVersion,jdbcType=VARCHAR}, 
+      #{itemCreateTime,jdbcType=TIMESTAMP}, #{itemModifyTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.vici.loginprovide.model.Item">
+    insert into item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="itemId != null">
+        item_id,
+      </if>
+      <if test="itemName != null">
+        item_name,
+      </if>
+      <if test="itemVersion != null">
+        item_version,
+      </if>
+      <if test="itemCreateTime != null">
+        item_create_time,
+      </if>
+      <if test="itemModifyTime != null">
+        item_modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="itemId != null">
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="itemName != null">
+        #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemVersion != null">
+        #{itemVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="itemCreateTime != null">
+        #{itemCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="itemModifyTime != null">
+        #{itemModifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.vici.loginprovide.model.Item">
+    update item
+    <set>
+      <if test="itemName != null">
+        item_name = #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemVersion != null">
+        item_version = #{itemVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="itemCreateTime != null">
+        item_create_time = #{itemCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="itemModifyTime != null">
+        item_modify_time = #{itemModifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where item_id = #{itemId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.vici.loginprovide.model.Item">
+    update item
+    set item_name = #{itemName,jdbcType=VARCHAR},
+      item_version = #{itemVersion,jdbcType=VARCHAR},
+      item_create_time = #{itemCreateTime,jdbcType=TIMESTAMP},
+      item_modify_time = #{itemModifyTime,jdbcType=TIMESTAMP}
+    where item_id = #{itemId,jdbcType=INTEGER}
+  </update>
+</mapper>

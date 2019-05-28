@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vici.loginprovide.dao.ChildMapper">
+  <resultMap id="BaseResultMap" type="com.vici.loginprovide.model.Child">
+    <id column="child_id" jdbcType="INTEGER" property="childId" />
+    <result column="child_name" jdbcType="VARCHAR" property="childName" />
+    <result column="child_sex" jdbcType="VARCHAR" property="childSex" />
+    <result column="child_age" jdbcType="VARCHAR" property="childAge" />
+    <result column="child_guardian" jdbcType="VARCHAR" property="childGuardian" />
+    <result column="child_phone" jdbcType="VARCHAR" property="childPhone" />
+    <result column="child_pwd" jdbcType="VARCHAR" property="childPwd" />
+    <result column="child_lock" jdbcType="INTEGER" property="childLock" />
+    <result column="child_train" jdbcType="INTEGER" property="childTrain" />
+    <result column="child_count" jdbcType="INTEGER" property="childCount" />
+    <result column="child_program" jdbcType="INTEGER" property="childProgram" />
+    <result column="child_gold" jdbcType="INTEGER" property="childGold" />
+    <result column="child_hospital_id" jdbcType="INTEGER" property="childHospitalId" />
+    <result column="child_create_time" jdbcType="TIMESTAMP" property="childCreateTime" />
+    <result column="child_modify_time" jdbcType="TIMESTAMP" property="childModifyTime" />
+    <result column="child_train_time" jdbcType="TIMESTAMP" property="childTrainTime" />
+    <result column="child_cut_time" jdbcType="TIMESTAMP" property="childCutTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    child_id, child_name, child_sex, child_age, child_guardian, child_phone, child_pwd, 
+    child_lock, child_train, child_count, child_program, child_gold, child_hospital_id, 
+    child_create_time, child_modify_time, child_train_time, child_cut_time
+  </sql>
+
+  <resultMap id="trainAndScale" type="com.vici.loginprovide.model.Child">
+    <id column="child_id" jdbcType="INTEGER" property="childId" />
+    <collection  property="trains" ofType="com.vici.loginprovide.model.Trains">
+      <id column="train_id" jdbcType="BIGINT" property="trainId" />
+      <result column="train_child_id" jdbcType="INTEGER" property="trainChildId" />
+      <result column="train_time" jdbcType="TIMESTAMP" property="trainTime" />
+      <result column="train_answer" jdbcType="LONGVARCHAR" property="trainAnswer" />
+      <result column="train_shangshu" jdbcType="LONGVARCHAR" property="trainShangshu" />
+      <result column="train_conclusion" jdbcType="LONGVARCHAR" property="trainConclusion"></result>
+      <result column="train_level" jdbcType="LONGVARCHAR" property="trainLevel"></result>
+    </collection>
+    <collection property="scale" ofType="com.vici.loginprovide.model.Scale">
+      <id column="scale_id" jdbcType="INTEGER" property="scaleId" />
+      <result column="scale_child_id" jdbcType="INTEGER" property="scaleChildId" />
+      <result column="scale_answer" jdbcType="VARCHAR" property="scaleAnswer" />
+      <result column="scale_time" jdbcType="TIMESTAMP" property="scaleTime" />
+    </collection>
+  </resultMap>
+
+  <select id="selectTrainAndScale" resultMap="trainAndScale">
+    select * from child c
+    left join train t on c.child_id = t.train_child_id
+    left join `scale` s on c.child_id = s.scale_child_id
+    where
+    c.child_id =#{childId,jdbcType=INTEGER}
+  </select>
+
+
+  <!-- 添加儿童信息 -->
+  <insert id="addChild" useGeneratedKeys="true"  keyProperty="childId"  parameterType="com.vici.loginprovide.model.Child">
+   insert into child (child_id, child_name, child_sex,
+      child_age, child_guardian, child_phone,
+      child_pwd, child_lock, child_train,
+      child_count, child_program, child_gold,
+      child_hospital_id, child_create_time, child_modify_time,
+      child_train_time, child_cut_time)
+    values (#{childId,jdbcType=INTEGER}, #{childName,jdbcType=VARCHAR}, #{childSex,jdbcType=VARCHAR},
+      #{childAge,jdbcType=VARCHAR}, #{childGuardian,jdbcType=VARCHAR}, #{childPhone,jdbcType=VARCHAR},
+      #{childPwd,jdbcType=VARCHAR}, #{childLock,jdbcType=INTEGER}, #{childTrain,jdbcType=INTEGER},
+      #{childCount,jdbcType=INTEGER}, #{childProgram,jdbcType=INTEGER}, #{childGold,jdbcType=INTEGER},
+      #{childHospitalId,jdbcType=INTEGER}, #{childCreateTime,jdbcType=TIMESTAMP}, #{childModifyTime,jdbcType=TIMESTAMP},
+      #{childTrainTime,jdbcType=TIMESTAMP}, #{childCutTime,jdbcType=TIMESTAMP})
+  </insert>
+
+  <!-- 根据姓名查询儿童信息 -->
+  <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from child
+    where child_name = #{childName,jdbcType=INTEGER}
+  </select>
+
+  <!-- 根据手机号查询儿童信息 -->
+  <select id="selectByPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from child
+    where child_phone = #{childPhone,jdbcType=VARCHAR}
+  </select>
+
+  <!-- 根据手机号和医院机构信息查询儿童信息 -->
+  <select id="selectByPhoneHospitalId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from child
+    where child_phone = #{childPhone,jdbcType=VARCHAR} and child_hospital_id = #{childHospitalId,jdbcType=INTEGER}
+  </select>
+
+  <!-- 登录接口 -->
+  <select id="childLogin" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from child
+    where child_phone = #{childPhone,jdbcType=VARCHAR}
+  </select>
+
+  <!-- 查询本机构的全部用户量 -->
+  <select id="selectChildren" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from child
+    where child_phone = #{childPhone,jdbcType=VARCHAR} and child_hospital_id = #{childHospitalId,jdbcType=INTEGER}
+    order by child_create_time desc
+  </select>
+
+  <!-- 修改儿童信息 -->
+  <update id="changeChild" parameterType="com.vici.loginprovide.model.Child">
+    update child
+    <set>
+      <if test="childName != null">
+        child_name = #{childName,jdbcType=VARCHAR},
+      </if>
+      <if test="childSex != null">
+        child_sex = #{childSex,jdbcType=VARCHAR},
+      </if>
+      <if test="childAge != null">
+        child_age = #{childAge,jdbcType=VARCHAR},
+      </if>
+      <if test="childGuardian != null">
+        child_guardian = #{childGuardian,jdbcType=VARCHAR},
+      </if>
+      <if test="childPhone != null">
+        child_phone = #{childPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="childPwd != null">
+        child_pwd = #{childPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="childLock != null">
+        child_lock = #{childLock,jdbcType=INTEGER},
+      </if>
+      <if test="childTrain != null">
+        child_train = #{childTrain,jdbcType=INTEGER},
+      </if>
+      <if test="childCount != null">
+        child_count = #{childCount,jdbcType=INTEGER},
+      </if>
+      <if test="childProgram != null">
+        child_program = #{childProgram,jdbcType=INTEGER},
+      </if>
+      <if test="childGold != null">
+        child_gold = #{childGold,jdbcType=INTEGER},
+      </if>
+      <if test="childHospitalId != null">
+        child_hospital_id = #{childHospitalId,jdbcType=INTEGER},
+      </if>
+      <if test="childCreateTime != null">
+        child_create_time = #{childCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="childModifyTime != null">
+        child_modify_time = #{childModifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="childTrainTime != null">
+        child_train_time = #{childTrainTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="childCutTime != null">
+        child_cut_time = #{childCutTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where child_id = #{childId,jdbcType=INTEGER}
+  </update>
+
+  <!-- 查询本机构内全部的训练者信息 -->
+  <select id="selectAllChild" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from child
+    where child_hospital_id = #{childHospitalId,jdbcType=INTEGER}
+    order by child_create_time desc
+  </select>
+
+  <!-- 查询本月本机构新注册的用户 以及用户信息-->
+  <select id="selectChildInMonth" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    SELECT * FROM
+	child c
+      WHERE
+	DATE_FORMAT( c.child_create_time, '%Y%m' ) = DATE_FORMAT( CURDATE( ), '%Y%m' )  AND c.child_hospital_id = #{childHospitalId,jdbcType=INTEGER}
+	ORDER BY c.child_create_time DESC
+  </select>
+
+  <!-- 查询在训用户 -->
+  <select id="selectTrainingChild" resultMap="BaseResultMap">
+    SELECT
+    child_id,child_name, child_sex,
+      child_age, child_guardian, child_phone,
+      child_train, child_count, child_program, child_gold,
+      child_train_time, child_cut_time
+    FROM
+	child
+      WHERE
+	 <![CDATA[ DATE_FORMAT(child_cut_time, '%Y-%m-%d %H:%T:%s') >=
+                        DATE_FORMAT(#{childCutTime}, '%Y-%m-%d %H:%T:%s')
+        ]]>  AND child_hospital_id = #{childHospitalId,jdbcType=INTEGER}
+  </select>
+
+  <!-- 查询不活跃用户 -->
+  <select id="slumberChild" resultMap="BaseResultMap">
+    SELECT
+     child_id,child_name, child_sex,
+      child_age, child_guardian, child_phone,
+      child_train, child_count, child_program, child_gold,
+      child_train_time, child_cut_time
+    FROM
+	child
+      WHERE
+	  <![CDATA[DATE_ADD(child_train_time,INTERVAL 7 DAY) < #{childTrainTime}]]>
+	  AND child_hospital_id = #{childHospitalId,jdbcType=INTEGER}
+  </select>
+
+  <!-- 根据医院id查询当月新增人数 -->
+  <select id="selectAddOneMonth" parameterType="java.lang.Integer" resultType="Integer">
+        select
+        COUNT(*)
+        from child
+        where PERIOD_DIFF(date_format(now(),'%Y%m'),date_format(child_create_time,'%Y%m')) = #{monthNum}
+          and child_hospital_id = #{childHospitalId,jdbcType=INTEGER}
+    </select>
+
+  <!-- 查询本周已训练的人数 -->
+  <select id="selectTrainedOnWeek" parameterType="INTEGER" resultType="INTEGER">
+    SELECT
+  COUNT(c.child_train_time)
+  FROM
+  child c
+  WHERE
+  YEARWEEK( date_format(c.child_train_time,'%Y-%m-%d'),1)= YEARWEEK(now( ),1)
+   AND c.child_hospital_id = #{childHospitalId,jdbcType=INTEGER}
+  </select>
+
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from child
+    where child_id = #{childId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from child
+    where child_id = #{childId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.vici.loginprovide.model.Child">
+    insert into child (child_id, child_name, child_sex, 
+      child_age, child_guardian, child_phone, 
+      child_pwd, child_lock, child_train, 
+      child_count, child_program, child_gold, 
+      child_hospital_id, child_create_time, child_modify_time, 
+      child_train_time, child_cut_time)
+    values (#{childId,jdbcType=INTEGER}, #{childName,jdbcType=VARCHAR}, #{childSex,jdbcType=VARCHAR}, 
+      #{childAge,jdbcType=VARCHAR}, #{childGuardian,jdbcType=VARCHAR}, #{childPhone,jdbcType=VARCHAR}, 
+      #{childPwd,jdbcType=VARCHAR}, #{childLock,jdbcType=INTEGER}, #{childTrain,jdbcType=INTEGER}, 
+      #{childCount,jdbcType=INTEGER}, #{childProgram,jdbcType=INTEGER}, #{childGold,jdbcType=INTEGER}, 
+      #{childHospitalId,jdbcType=INTEGER}, #{childCreateTime,jdbcType=TIMESTAMP}, #{childModifyTime,jdbcType=TIMESTAMP}, 
+      #{childTrainTime,jdbcType=TIMESTAMP}, #{childCutTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.vici.loginprovide.model.Child">
+    insert into child
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="childId != null">
+        child_id,
+      </if>
+      <if test="childName != null">
+        child_name,
+      </if>
+      <if test="childSex != null">
+        child_sex,
+      </if>
+      <if test="childAge != null">
+        child_age,
+      </if>
+      <if test="childGuardian != null">
+        child_guardian,
+      </if>
+      <if test="childPhone != null">
+        child_phone,
+      </if>
+      <if test="childPwd != null">
+        child_pwd,
+      </if>
+      <if test="childLock != null">
+        child_lock,
+      </if>
+      <if test="childTrain != null">
+        child_train,
+      </if>
+      <if test="childCount != null">
+        child_count,
+      </if>
+      <if test="childProgram != null">
+        child_program,
+      </if>
+      <if test="childGold != null">
+        child_gold,
+      </if>
+      <if test="childHospitalId != null">
+        child_hospital_id,
+      </if>
+      <if test="childCreateTime != null">
+        child_create_time,
+      </if>
+      <if test="childModifyTime != null">
+        child_modify_time,
+      </if>
+      <if test="childTrainTime != null">
+        child_train_time,
+      </if>
+      <if test="childCutTime != null">
+        child_cut_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="childId != null">
+        #{childId,jdbcType=INTEGER},
+      </if>
+      <if test="childName != null">
+        #{childName,jdbcType=VARCHAR},
+      </if>
+      <if test="childSex != null">
+        #{childSex,jdbcType=VARCHAR},
+      </if>
+      <if test="childAge != null">
+        #{childAge,jdbcType=VARCHAR},
+      </if>
+      <if test="childGuardian != null">
+        #{childGuardian,jdbcType=VARCHAR},
+      </if>
+      <if test="childPhone != null">
+        #{childPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="childPwd != null">
+        #{childPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="childLock != null">
+        #{childLock,jdbcType=INTEGER},
+      </if>
+      <if test="childTrain != null">
+        #{childTrain,jdbcType=INTEGER},
+      </if>
+      <if test="childCount != null">
+        #{childCount,jdbcType=INTEGER},
+      </if>
+      <if test="childProgram != null">
+        #{childProgram,jdbcType=INTEGER},
+      </if>
+      <if test="childGold != null">
+        #{childGold,jdbcType=INTEGER},
+      </if>
+      <if test="childHospitalId != null">
+        #{childHospitalId,jdbcType=INTEGER},
+      </if>
+      <if test="childCreateTime != null">
+        #{childCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="childModifyTime != null">
+        #{childModifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="childTrainTime != null">
+        #{childTrainTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="childCutTime != null">
+        #{childCutTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.vici.loginprovide.model.Child">
+    update child
+    <set>
+      <if test="childName != null">
+        child_name = #{childName,jdbcType=VARCHAR},
+      </if>
+      <if test="childSex != null">
+        child_sex = #{childSex,jdbcType=VARCHAR},
+      </if>
+      <if test="childAge != null">
+        child_age = #{childAge,jdbcType=VARCHAR},
+      </if>
+      <if test="childGuardian != null">
+        child_guardian = #{childGuardian,jdbcType=VARCHAR},
+      </if>
+      <if test="childPhone != null">
+        child_phone = #{childPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="childPwd != null">
+        child_pwd = #{childPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="childLock != null">
+        child_lock = #{childLock,jdbcType=INTEGER},
+      </if>
+      <if test="childTrain != null">
+        child_train = #{childTrain,jdbcType=INTEGER},
+      </if>
+      <if test="childCount != null">
+        child_count = #{childCount,jdbcType=INTEGER},
+      </if>
+      <if test="childProgram != null">
+        child_program = #{childProgram,jdbcType=INTEGER},
+      </if>
+      <if test="childGold != null">
+        child_gold = #{childGold,jdbcType=INTEGER},
+      </if>
+      <if test="childHospitalId != null">
+        child_hospital_id = #{childHospitalId,jdbcType=INTEGER},
+      </if>
+      <if test="childCreateTime != null">
+        child_create_time = #{childCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="childModifyTime != null">
+        child_modify_time = #{childModifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="childTrainTime != null">
+        child_train_time = #{childTrainTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="childCutTime != null">
+        child_cut_time = #{childCutTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where child_id = #{childId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.vici.loginprovide.model.Child">
+    update child
+    set child_name = #{childName,jdbcType=VARCHAR},
+      child_sex = #{childSex,jdbcType=VARCHAR},
+      child_age = #{childAge,jdbcType=VARCHAR},
+      child_guardian = #{childGuardian,jdbcType=VARCHAR},
+      child_phone = #{childPhone,jdbcType=VARCHAR},
+      child_pwd = #{childPwd,jdbcType=VARCHAR},
+      child_lock = #{childLock,jdbcType=INTEGER},
+      child_train = #{childTrain,jdbcType=INTEGER},
+      child_count = #{childCount,jdbcType=INTEGER},
+      child_program = #{childProgram,jdbcType=INTEGER},
+      child_gold = #{childGold,jdbcType=INTEGER},
+      child_hospital_id = #{childHospitalId,jdbcType=INTEGER},
+      child_create_time = #{childCreateTime,jdbcType=TIMESTAMP},
+      child_modify_time = #{childModifyTime,jdbcType=TIMESTAMP},
+      child_train_time = #{childTrainTime,jdbcType=TIMESTAMP},
+      child_cut_time = #{childCutTime,jdbcType=TIMESTAMP}
+    where child_id = #{childId,jdbcType=INTEGER}
+  </update>
+</mapper>

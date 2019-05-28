@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vici.loginprovide.dao.HospitalMapper">
+  <resultMap id="BaseResultMap" type="com.vici.loginprovide.model.Hospital">
+    <id column="hospital_id" jdbcType="INTEGER" property="hospitalId" />
+    <result column="hospital_name" jdbcType="VARCHAR" property="hospitalName" />
+    <result column="hospital_user" jdbcType="VARCHAR" property="hospitalUser" />
+    <result column="hospital_address" jdbcType="VARCHAR" property="hospitalAddress" />
+    <result column="hospital_email" jdbcType="VARCHAR" property="hospitalEmail" />
+    <result column="hospital_phone" jdbcType="VARCHAR" property="hospitalPhone" />
+    <result column="hospital_create_time" jdbcType="TIMESTAMP" property="hospitalCreateTime" />
+    <result column="hospital_modify_time" jdbcType="TIMESTAMP" property="hospitalModifyTime" />
+    <result column="hospital_expiration_time" jdbcType="TIMESTAMP" property="hospitalExpirationTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    hospital_id, hospital_name, hospital_user, hospital_address, hospital_email, hospital_phone, 
+    hospital_create_time, hospital_modify_time, hospital_expiration_time
+  </sql>
+
+  <!-- 机构注册SQL -->
+  <insert id="addHospital" useGeneratedKeys="true"  keyProperty="hospitalId"  parameterType="com.vici.loginprovide.model.Hospital">
+    insert into hospital (hospital_id, hospital_name, hospital_user,
+      hospital_address, hospital_email, hospital_phone,
+      hospital_create_time, hospital_modify_time,
+      hospital_expiration_time)
+    values (#{hospitalId,jdbcType=INTEGER}, #{hospitalName,jdbcType=VARCHAR}, #{hospitalUser,jdbcType=VARCHAR},
+      #{hospitalAddress,jdbcType=VARCHAR}, #{hospitalEmail,jdbcType=VARCHAR}, #{hospitalPhone,jdbcType=VARCHAR},
+      #{hospitalCreateTime,jdbcType=TIMESTAMP}, #{hospitalModifyTime,jdbcType=TIMESTAMP},
+      #{hospitalExpirationTime,jdbcType=TIMESTAMP})
+  </insert>
+
+  <!-- 检测是否手机号已存在，已注册 -->
+  <select id="selectByPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    *
+    from hospital
+    where hospital_phone = #{hospitalPhone,jdbcType=VARCHAR}
+  </select>
+
+  <!-- 获取已存在的月数 -->
+  <select id="getMonthNum" parameterType="com.vici.loginprovide.model.Hospital" resultType="INTEGER">
+    SELECT
+    TIMESTAMPDIFF(MONTH,DATE_FORMAT(hospital_create_time,'%Y-%m-%d'), DATE_FORMAT(now(), '%Y-%m-%d'))
+    from hospital where hospital_id=#{hospitalId}
+  </select>
+
+  <select id="selectByPhone1" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    *
+    from hospital
+    where hospital_phone = #{hospitalPhone,jdbcType=VARCHAR}
+  </select>
+
+  <!-- 根据手机号查询机构信息 -->
+  <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    *
+    from hospital
+    where hospital_name = #{hospitalName,jdbcType=VARCHAR}
+  </select>
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from hospital
+    where hospital_id = #{hospitalId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from hospital
+    where hospital_id = #{hospitalId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.vici.loginprovide.model.Hospital">
+    insert into hospital (hospital_id, hospital_name, hospital_user, 
+      hospital_address, hospital_email, hospital_phone, 
+      hospital_create_time, hospital_modify_time, 
+      hospital_expiration_time)
+    values (#{hospitalId,jdbcType=INTEGER}, #{hospitalName,jdbcType=VARCHAR}, #{hospitalUser,jdbcType=VARCHAR}, 
+      #{hospitalAddress,jdbcType=VARCHAR}, #{hospitalEmail,jdbcType=VARCHAR}, #{hospitalPhone,jdbcType=VARCHAR}, 
+      #{hospitalCreateTime,jdbcType=TIMESTAMP}, #{hospitalModifyTime,jdbcType=TIMESTAMP}, 
+      #{hospitalExpirationTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.vici.loginprovide.model.Hospital">
+    insert into hospital
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="hospitalId != null">
+        hospital_id,
+      </if>
+      <if test="hospitalName != null">
+        hospital_name,
+      </if>
+      <if test="hospitalUser != null">
+        hospital_user,
+      </if>
+      <if test="hospitalAddress != null">
+        hospital_address,
+      </if>
+      <if test="hospitalEmail != null">
+        hospital_email,
+      </if>
+      <if test="hospitalPhone != null">
+        hospital_phone,
+      </if>
+      <if test="hospitalCreateTime != null">
+        hospital_create_time,
+      </if>
+      <if test="hospitalModifyTime != null">
+        hospital_modify_time,
+      </if>
+      <if test="hospitalExpirationTime != null">
+        hospital_expiration_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="hospitalId != null">
+        #{hospitalId,jdbcType=INTEGER},
+      </if>
+      <if test="hospitalName != null">
+        #{hospitalName,jdbcType=VARCHAR},
+      </if>
+      <if test="hospitalUser != null">
+        #{hospitalUser,jdbcType=VARCHAR},
+      </if>
+      <if test="hospitalAddress != null">
+        #{hospitalAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="hospitalEmail != null">
+        #{hospitalEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="hospitalPhone != null">
+        #{hospitalPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="hospitalCreateTime != null">
+        #{hospitalCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hospitalModifyTime != null">
+        #{hospitalModifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hospitalExpirationTime != null">
+        #{hospitalExpirationTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.vici.loginprovide.model.Hospital">
+    update hospital
+    <set>
+      <if test="hospitalName != null">
+        hospital_name = #{hospitalName,jdbcType=VARCHAR},
+      </if>
+      <if test="hospitalUser != null">
+        hospital_user = #{hospitalUser,jdbcType=VARCHAR},
+      </if>
+      <if test="hospitalAddress != null">
+        hospital_address = #{hospitalAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="hospitalEmail != null">
+        hospital_email = #{hospitalEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="hospitalPhone != null">
+        hospital_phone = #{hospitalPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="hospitalCreateTime != null">
+        hospital_create_time = #{hospitalCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hospitalModifyTime != null">
+        hospital_modify_time = #{hospitalModifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hospitalExpirationTime != null">
+        hospital_expiration_time = #{hospitalExpirationTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where hospital_id = #{hospitalId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.vici.loginprovide.model.Hospital">
+    update hospital
+    set hospital_name = #{hospitalName,jdbcType=VARCHAR},
+      hospital_user = #{hospitalUser,jdbcType=VARCHAR},
+      hospital_address = #{hospitalAddress,jdbcType=VARCHAR},
+      hospital_email = #{hospitalEmail,jdbcType=VARCHAR},
+      hospital_phone = #{hospitalPhone,jdbcType=VARCHAR},
+      hospital_create_time = #{hospitalCreateTime,jdbcType=TIMESTAMP},
+      hospital_modify_time = #{hospitalModifyTime,jdbcType=TIMESTAMP},
+      hospital_expiration_time = #{hospitalExpirationTime,jdbcType=TIMESTAMP}
+    where hospital_id = #{hospitalId,jdbcType=INTEGER}
+  </update>
+</mapper>

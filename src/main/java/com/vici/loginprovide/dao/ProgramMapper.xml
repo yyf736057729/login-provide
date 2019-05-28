@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vici.loginprovide.dao.ProgramMapper">
+  <resultMap id="BaseResultMap" type="com.vici.loginprovide.model.Program">
+    <id column="program_id" jdbcType="INTEGER" property="programId" />
+    <result column="program_name" jdbcType="VARCHAR" property="programName" />
+    <result column="program_number" jdbcType="INTEGER" property="programNumber" />
+    <result column="program_time" jdbcType="TIMESTAMP" property="programTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    program_id, program_name, program_number, program_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from program
+    where program_id = #{programId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from program
+    where program_id = #{programId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.vici.loginprovide.model.Program">
+    insert into program (program_id, program_name, program_number, 
+      program_time)
+    values (#{programId,jdbcType=INTEGER}, #{programName,jdbcType=VARCHAR}, #{programNumber,jdbcType=INTEGER}, 
+      #{programTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.vici.loginprovide.model.Program">
+    insert into program
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="programId != null">
+        program_id,
+      </if>
+      <if test="programName != null">
+        program_name,
+      </if>
+      <if test="programNumber != null">
+        program_number,
+      </if>
+      <if test="programTime != null">
+        program_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="programId != null">
+        #{programId,jdbcType=INTEGER},
+      </if>
+      <if test="programName != null">
+        #{programName,jdbcType=VARCHAR},
+      </if>
+      <if test="programNumber != null">
+        #{programNumber,jdbcType=INTEGER},
+      </if>
+      <if test="programTime != null">
+        #{programTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.vici.loginprovide.model.Program">
+    update program
+    <set>
+      <if test="programName != null">
+        program_name = #{programName,jdbcType=VARCHAR},
+      </if>
+      <if test="programNumber != null">
+        program_number = #{programNumber,jdbcType=INTEGER},
+      </if>
+      <if test="programTime != null">
+        program_time = #{programTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where program_id = #{programId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.vici.loginprovide.model.Program">
+    update program
+    set program_name = #{programName,jdbcType=VARCHAR},
+      program_number = #{programNumber,jdbcType=INTEGER},
+      program_time = #{programTime,jdbcType=TIMESTAMP}
+    where program_id = #{programId,jdbcType=INTEGER}
+  </update>
+</mapper>

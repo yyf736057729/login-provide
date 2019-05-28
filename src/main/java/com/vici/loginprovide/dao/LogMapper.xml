@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vici.loginprovide.dao.LogMapper">
+  <resultMap id="BaseResultMap" type="com.vici.loginprovide.model.Log">
+    <id column="log_id" jdbcType="BIGINT" property="logId" />
+    <result column="log_user_id" jdbcType="INTEGER" property="logUserId" />
+    <result column="log_user" jdbcType="VARCHAR" property="logUser" />
+    <result column="log_class_name" jdbcType="VARCHAR" property="logClassName" />
+    <result column="log_request_method" jdbcType="VARCHAR" property="logRequestMethod" />
+    <result column="log_content_type" jdbcType="VARCHAR" property="logContentType" />
+    <result column="log_request_type" jdbcType="VARCHAR" property="logRequestType" />
+    <result column="log_description" jdbcType="VARCHAR" property="logDescription" />
+    <result column="log_address" jdbcType="VARCHAR" property="logAddress" />
+    <result column="log_server_addr" jdbcType="VARCHAR" property="logServerAddr" />
+    <result column="log_remote_addr" jdbcType="VARCHAR" property="logRemoteAddr" />
+    <result column="log_device_name" jdbcType="VARCHAR" property="logDeviceName" />
+    <result column="log_browser_name" jdbcType="VARCHAR" property="logBrowserName" />
+    <result column="log_user_agent" jdbcType="VARCHAR" property="logUserAgent" />
+    <result column="log_request_uri" jdbcType="VARCHAR" property="logRequestUri" />
+    <result column="log_time" jdbcType="TIMESTAMP" property="logTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    log_id, log_user_id, log_user, log_class_name, log_request_method, log_content_type, 
+    log_request_type, log_description, log_address, log_server_addr, log_remote_addr, 
+    log_device_name, log_browser_name, log_user_agent, log_request_uri, log_time
+  </sql>
+
+  <!-- 上传日志信息 -->
+  <insert id="addLog" parameterType="com.vici.loginprovide.model.Log">
+    insert into log (log_id, log_user_id, log_user,
+      log_class_name, log_request_method, log_content_type,
+      log_request_type, log_description, log_address,
+      log_server_addr, log_remote_addr, log_device_name,
+      log_browser_name, log_user_agent, log_request_uri,
+      log_time)
+    values (#{logId,jdbcType=BIGINT}, #{logUserId,jdbcType=INTEGER}, #{logUser,jdbcType=VARCHAR},
+      #{logClassName,jdbcType=VARCHAR}, #{logRequestMethod,jdbcType=VARCHAR}, #{logContentType,jdbcType=VARCHAR},
+      #{logRequestType,jdbcType=VARCHAR}, #{logDescription,jdbcType=VARCHAR}, #{logAddress,jdbcType=VARCHAR},
+      #{logServerAddr,jdbcType=VARCHAR}, #{logRemoteAddr,jdbcType=VARCHAR}, #{logDeviceName,jdbcType=VARCHAR},
+      #{logBrowserName,jdbcType=VARCHAR}, #{logUserAgent,jdbcType=VARCHAR}, #{logRequestUri,jdbcType=VARCHAR},
+      #{logTime,jdbcType=TIMESTAMP})
+  </insert>
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from log
+    where log_id = #{logId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from log
+    where log_id = #{logId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.vici.loginprovide.model.Log">
+    insert into log (log_id, log_user_id, log_user, 
+      log_class_name, log_request_method, log_content_type, 
+      log_request_type, log_description, log_address, 
+      log_server_addr, log_remote_addr, log_device_name, 
+      log_browser_name, log_user_agent, log_request_uri, 
+      log_time)
+    values (#{logId,jdbcType=BIGINT}, #{logUserId,jdbcType=INTEGER}, #{logUser,jdbcType=VARCHAR}, 
+      #{logClassName,jdbcType=VARCHAR}, #{logRequestMethod,jdbcType=VARCHAR}, #{logContentType,jdbcType=VARCHAR}, 
+      #{logRequestType,jdbcType=VARCHAR}, #{logDescription,jdbcType=VARCHAR}, #{logAddress,jdbcType=VARCHAR}, 
+      #{logServerAddr,jdbcType=VARCHAR}, #{logRemoteAddr,jdbcType=VARCHAR}, #{logDeviceName,jdbcType=VARCHAR}, 
+      #{logBrowserName,jdbcType=VARCHAR}, #{logUserAgent,jdbcType=VARCHAR}, #{logRequestUri,jdbcType=VARCHAR}, 
+      #{logTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.vici.loginprovide.model.Log">
+    insert into log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="logId != null">
+        log_id,
+      </if>
+      <if test="logUserId != null">
+        log_user_id,
+      </if>
+      <if test="logUser != null">
+        log_user,
+      </if>
+      <if test="logClassName != null">
+        log_class_name,
+      </if>
+      <if test="logRequestMethod != null">
+        log_request_method,
+      </if>
+      <if test="logContentType != null">
+        log_content_type,
+      </if>
+      <if test="logRequestType != null">
+        log_request_type,
+      </if>
+      <if test="logDescription != null">
+        log_description,
+      </if>
+      <if test="logAddress != null">
+        log_address,
+      </if>
+      <if test="logServerAddr != null">
+        log_server_addr,
+      </if>
+      <if test="logRemoteAddr != null">
+        log_remote_addr,
+      </if>
+      <if test="logDeviceName != null">
+        log_device_name,
+      </if>
+      <if test="logBrowserName != null">
+        log_browser_name,
+      </if>
+      <if test="logUserAgent != null">
+        log_user_agent,
+      </if>
+      <if test="logRequestUri != null">
+        log_request_uri,
+      </if>
+      <if test="logTime != null">
+        log_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="logId != null">
+        #{logId,jdbcType=BIGINT},
+      </if>
+      <if test="logUserId != null">
+        #{logUserId,jdbcType=INTEGER},
+      </if>
+      <if test="logUser != null">
+        #{logUser,jdbcType=VARCHAR},
+      </if>
+      <if test="logClassName != null">
+        #{logClassName,jdbcType=VARCHAR},
+      </if>
+      <if test="logRequestMethod != null">
+        #{logRequestMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="logContentType != null">
+        #{logContentType,jdbcType=VARCHAR},
+      </if>
+      <if test="logRequestType != null">
+        #{logRequestType,jdbcType=VARCHAR},
+      </if>
+      <if test="logDescription != null">
+        #{logDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="logAddress != null">
+        #{logAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="logServerAddr != null">
+        #{logServerAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="logRemoteAddr != null">
+        #{logRemoteAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="logDeviceName != null">
+        #{logDeviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="logBrowserName != null">
+        #{logBrowserName,jdbcType=VARCHAR},
+      </if>
+      <if test="logUserAgent != null">
+        #{logUserAgent,jdbcType=VARCHAR},
+      </if>
+      <if test="logRequestUri != null">
+        #{logRequestUri,jdbcType=VARCHAR},
+      </if>
+      <if test="logTime != null">
+        #{logTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.vici.loginprovide.model.Log">
+    update log
+    <set>
+      <if test="logUserId != null">
+        log_user_id = #{logUserId,jdbcType=INTEGER},
+      </if>
+      <if test="logUser != null">
+        log_user = #{logUser,jdbcType=VARCHAR},
+      </if>
+      <if test="logClassName != null">
+        log_class_name = #{logClassName,jdbcType=VARCHAR},
+      </if>
+      <if test="logRequestMethod != null">
+        log_request_method = #{logRequestMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="logContentType != null">
+        log_content_type = #{logContentType,jdbcType=VARCHAR},
+      </if>
+      <if test="logRequestType != null">
+        log_request_type = #{logRequestType,jdbcType=VARCHAR},
+      </if>
+      <if test="logDescription != null">
+        log_description = #{logDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="logAddress != null">
+        log_address = #{logAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="logServerAddr != null">
+        log_server_addr = #{logServerAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="logRemoteAddr != null">
+        log_remote_addr = #{logRemoteAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="logDeviceName != null">
+        log_device_name = #{logDeviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="logBrowserName != null">
+        log_browser_name = #{logBrowserName,jdbcType=VARCHAR},
+      </if>
+      <if test="logUserAgent != null">
+        log_user_agent = #{logUserAgent,jdbcType=VARCHAR},
+      </if>
+      <if test="logRequestUri != null">
+        log_request_uri = #{logRequestUri,jdbcType=VARCHAR},
+      </if>
+      <if test="logTime != null">
+        log_time = #{logTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where log_id = #{logId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.vici.loginprovide.model.Log">
+    update log
+    set log_user_id = #{logUserId,jdbcType=INTEGER},
+      log_user = #{logUser,jdbcType=VARCHAR},
+      log_class_name = #{logClassName,jdbcType=VARCHAR},
+      log_request_method = #{logRequestMethod,jdbcType=VARCHAR},
+      log_content_type = #{logContentType,jdbcType=VARCHAR},
+      log_request_type = #{logRequestType,jdbcType=VARCHAR},
+      log_description = #{logDescription,jdbcType=VARCHAR},
+      log_address = #{logAddress,jdbcType=VARCHAR},
+      log_server_addr = #{logServerAddr,jdbcType=VARCHAR},
+      log_remote_addr = #{logRemoteAddr,jdbcType=VARCHAR},
+      log_device_name = #{logDeviceName,jdbcType=VARCHAR},
+      log_browser_name = #{logBrowserName,jdbcType=VARCHAR},
+      log_user_agent = #{logUserAgent,jdbcType=VARCHAR},
+      log_request_uri = #{logRequestUri,jdbcType=VARCHAR},
+      log_time = #{logTime,jdbcType=TIMESTAMP}
+    where log_id = #{logId,jdbcType=BIGINT}
+  </update>
+</mapper>

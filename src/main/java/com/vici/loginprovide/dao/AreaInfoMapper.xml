@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vici.loginprovide.dao.AreaInfoMapper">
+
+    <select id="getAreaInfo" resultType="com.vici.loginprovide.model.AreaInfo">
+        select * from areainfo where areaLevel = #{areaLevel}
+    </select>
+    <select id="getCity" resultType="com.vici.loginprovide.model.AreaInfo">
+        select * from areainfo where parent_id = #{id} and areaLevel = #{areaLevel}
+    </select>
+    <select id="getArea" resultType="com.vici.loginprovide.model.AreaInfo">
+        select * from areainfo where parent_id = #{id} and areaLevel = #{areaLevel}
+    </select>
+</mapper>

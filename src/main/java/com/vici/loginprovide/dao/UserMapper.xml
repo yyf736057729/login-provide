@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vici.loginprovide.dao.UserMapper">
+  <resultMap id="BaseResultMap" type="com.vici.loginprovide.model.User">
+    <id column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+    <result column="user_pwd" jdbcType="VARCHAR" property="userPwd" />
+    <result column="user_status" jdbcType="VARCHAR" property="userStatus" />
+    <result column="user_hospital_name" jdbcType="VARCHAR" property="userHospitalName" />
+    <result column="user_hospital_id" jdbcType="INTEGER" property="userHospitalId" />
+    <result column="user_create_time" jdbcType="TIMESTAMP" property="userCreateTime" />
+    <result column="user_modify_time" jdbcType="TIMESTAMP" property="userModifyTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    user_id, user_name, user_phone, user_pwd, user_status, user_hospital_name, user_hospital_id, 
+    user_create_time, user_modify_time
+  </sql>
+
+  <resultMap id="userHospital" type="com.vici.loginprovide.model.User">
+    <id column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+    <result column="user_pwd" jdbcType="VARCHAR" property="userPwd" />
+    <result column="user_status" jdbcType="VARCHAR" property="userStatus" />
+    <result column="user_hospital_name" jdbcType="VARCHAR" property="userHospitalName" />
+    <result column="user_hospital_id" jdbcType="INTEGER" property="userHospitalId" />
+    <result column="user_create_time" jdbcType="TIMESTAMP" property="userCreateTime" />
+    <result column="user_modify_time" jdbcType="TIMESTAMP" property="userModifyTime" />
+    <collection  property="hospital" ofType="com.vici.loginprovide.model.Hospital">
+      <id column="hospital_id" jdbcType="INTEGER" property="hospitalId" />
+      <result column="hospital_name" jdbcType="VARCHAR" property="hospitalName" />
+      <result column="hospital_user" jdbcType="VARCHAR" property="hospitalUser" />
+      <result column="hospital_address" jdbcType="VARCHAR" property="hospitalAddress" />
+      <result column="hospital_email" jdbcType="VARCHAR" property="hospitalEmail" />
+      <result column="hospital_phone" jdbcType="VARCHAR" property="hospitalPhone" />
+      <result column="hospital_create_time" jdbcType="TIMESTAMP" property="hospitalCreateTime" />
+      <result column="hospital_modify_time" jdbcType="TIMESTAMP" property="hospitalModifyTime" />
+      <result column="hospital_expiration_time" jdbcType="TIMESTAMP" property="hospitalExpirationTime" />
+    </collection >
+  </resultMap>
+
+
+  <!-- 联表查询在用户登录的时候返回机构和超级管理员信息 -->
+  <select id="selectUserLogin" resultMap="userHospital" >
+SELECT
+	u.user_id,
+	u.user_name,
+	u.user_status,
+	h.hospital_id,
+	h.hospital_email,
+	h.hospital_address,
+	h.hospital_name,
+	h.hospital_phone,
+	h.hospital_expiration_time
+FROM
+	user u
+LEFT JOIN hospital h ON u.user_hospital_id = h.hospital_id
+where
+u.user_hospital_id = #{userHospitalId,jdbcType=INTEGER} and u.user_id=#{userId,jdbcType=INTEGER}
+  </select>
+
+<!-- 查询机构信息 -->
+  <select id="selectOneUser" resultMap="userHospital" >
+SELECT
+	u.user_id,
+	u.user_name,
+	u.user_status,
+	h.hospital_id,
+	h.hospital_email,
+	h.hospital_address,
+	h.hospital_name,
+	h.hospital_phone,
+	h.hospital_expiration_time
+FROM
+	user u
+LEFT JOIN hospital h ON u.user_hospital_id = h.hospital_id
+where
+u.user_hospital_id = #{userHospitalId,jdbcType=INTEGER} and u.user_id=#{userId,jdbcType=INTEGER}
+  </select>
+
+
+  <!-- 登陆SQL -->
+  <select id="userLogin" parameterType="java.lang.String" resultMap="BaseResultMap">
+   SELECT * FROM user u WHERE u.user_phone = #{userPhone} limit 1
+  </select>
+
+  <!-- 添加一个普通管理员 -->
+  <insert id="addUser" parameterType="com.vici.loginprovide.model.User">
+    insert into user (user_id, user_name, user_phone,
+      user_pwd, user_status, user_hospital_name,
+      user_hospital_id, user_create_time, user_modify_time
+      )
+    values (#{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{userPhone,jdbcType=VARCHAR},
+      #{userPwd,jdbcType=VARCHAR}, #{userStatus,jdbcType=VARCHAR}, #{userHospitalName,jdbcType=VARCHAR},
+      #{userHospitalId,jdbcType=INTEGER}, #{userCreateTime,jdbcType=TIMESTAMP}, #{userModifyTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+
+  <!-- 根据姓名查询管理员 -->
+  <select id="selectUserByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user
+    where user_name = #{userName,jdbcType=VARCHAR}
+  </select>
+
+  <!-- 根据手机号查询管理员 -->
+  <select id="selectUserByPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user
+    where user_phone = #{userPhone,jdbcType=VARCHAR}
+  </select>
+
+  <!-- 查询本机构内全部的管理员信息 -->
+  <select id="selectAllUser" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user
+    where user_hospital_id = #{userHospitalId,jdbcType=VARCHAR} and user_status = 2
+    order by user_create_time desc
+  </select>
+
+  <!-- 查询本机构的超级管理员 -->
+  <select id="selectAdmin" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user
+    where user_hospital_id = #{userHospitalId} and user_status=1
+  </select>
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from user
+    where user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.vici.loginprovide.model.User">
+    insert into user (user_id, user_name, user_phone, 
+      user_pwd, user_status, user_hospital_name, 
+      user_hospital_id, user_create_time, user_modify_time
+      )
+    values (#{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{userPhone,jdbcType=VARCHAR},
+      #{userPwd,jdbcType=VARCHAR}, #{userStatus,jdbcType=VARCHAR}, #{userHospitalName,jdbcType=VARCHAR}, 
+      #{userHospitalId,jdbcType=INTEGER}, #{userCreateTime,jdbcType=TIMESTAMP}, #{userModifyTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.vici.loginprovide.model.User">
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="userPhone != null">
+        user_phone,
+      </if>
+      <if test="userPwd != null">
+        user_pwd,
+      </if>
+      <if test="userStatus != null">
+        user_status,
+      </if>
+      <if test="userHospitalName != null">
+        user_hospital_name,
+      </if>
+      <if test="userHospitalId != null">
+        user_hospital_id,
+      </if>
+      <if test="userCreateTime != null">
+        user_create_time,
+      </if>
+      <if test="userModifyTime != null">
+        user_modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPhone != null">
+        #{userPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="userPwd != null">
+        #{userPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="userStatus != null">
+        #{userStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="userHospitalName != null">
+        #{userHospitalName,jdbcType=VARCHAR},
+      </if>
+      <if test="userHospitalId != null">
+        #{userHospitalId,jdbcType=INTEGER},
+      </if>
+      <if test="userCreateTime != null">
+        #{userCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userModifyTime != null">
+        #{userModifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.vici.loginprovide.model.User">
+    update user
+    <set>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPhone != null">
+        user_phone = #{userPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="userPwd != null">
+        user_pwd = #{userPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="userStatus != null">
+        user_status = #{userStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="userHospitalName != null">
+        user_hospital_name = #{userHospitalName,jdbcType=VARCHAR},
+      </if>
+      <if test="userHospitalId != null">
+        user_hospital_id = #{userHospitalId,jdbcType=INTEGER},
+      </if>
+      <if test="userCreateTime != null">
+        user_create_time = #{userCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userModifyTime != null">
+        user_modify_time = #{userModifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.vici.loginprovide.model.User">
+    update user
+    set user_name = #{userName,jdbcType=VARCHAR},
+      user_phone = #{userPhone,jdbcType=VARCHAR},
+      user_pwd = #{userPwd,jdbcType=VARCHAR},
+      user_status = #{userStatus,jdbcType=VARCHAR},
+      user_hospital_name = #{userHospitalName,jdbcType=VARCHAR},
+      user_hospital_id = #{userHospitalId,jdbcType=INTEGER},
+      user_create_time = #{userCreateTime,jdbcType=TIMESTAMP},
+      user_modify_time = #{userModifyTime,jdbcType=TIMESTAMP}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+</mapper>
